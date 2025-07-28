@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Приглашение на свадьбу</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">    
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+<svg class="bg-watercolor" width="100vw" height="100vh" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="300" cy="200" rx="220" ry="120" fill="#fffbe6" fill-opacity="0.5"/>
+    <ellipse cx="1200" cy="700" rx="180" ry="90" fill="#e6cfa7" fill-opacity="0.18"/>
+    <ellipse cx="900" cy="100" rx="120" ry="60" fill="#e6cfa7" fill-opacity="0.13"/>
+</svg>
+<div class="container">
+    <div class="header">
+        <h1>Дорогие друзья и близкие!</h1>
+        <svg class="flourish" viewBox="0 0 90 22"><path d="M5,18 Q45,0 85,18" stroke="#e6cfa7" stroke-width="2.5" fill="none"/></svg>
+        <div class="title">Приглашаем вас на нашу свадьбу</div>
+        <div class="subtitle">В нашей жизни состоится важное событие —<br>День нашей свадьбы</div>
+        <div class="header-image-polaroid">
+            <img src="{% static 'img2.jpg' %}" alt="image" class="header-image">
+        </div>
+    </div>
+    <svg class="decor-heart" viewBox="0 0 54 54"><path d="M27 48s-15-9.5-15-20A8 8 0 0 1 27 16a8 8 0 0 1 15 12c0 10.5-15 20-15 20z" fill="#fffbe6" stroke="#e6cfa7" stroke-width="2.5"/></svg>
+    <div class="divider"></div>
+    <div class="calendar-block">
+        <div class="date">02.08.2025</div>
+        <div class="calendar" id="calendar"></div>
+    </div>
+    <svg class="decor-branch" viewBox="0 0 80 24"><path d="M5,20 Q40,0 75,20" stroke="#e6cfa7" stroke-width="2.5" fill="none"/><circle cx="40" cy="6" r="2.5" fill="#b48a78"/></svg>
+    <div class="invite-text">
+        В этот особенный день мы хотим оказаться в окружении самых близких и дорогих нам людей.<br>
+        Мы будем рады видеть вас на нашем празднике!
+    </div>
+    <div class="divider"></div>
+    <div class="timeline-block">
+        <div class="timeline-title">Программа торжества</div>
+        <div class="timeline">
+            <div class="timeline-event">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">17:00</div>
+                <div class="timeline-desc">Сбор гостей</div>
+            </div>
+            <div class="timeline-event">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">18:00</div>
+                <div class="timeline-desc">Начало программы</div>
+            </div>
+            <div class="timeline-event">
+                <div class="timeline-dot"></div>
+                <div class="timeline-time">23:00</div>
+                <div class="timeline-desc">Торт</div>
+            </div>
+        </div>
+    </div>
+    <svg class="decor-branch" viewBox="0 0 80 24"><path d="M5,20 Q40,0 75,20" stroke="#e6cfa7" stroke-width="2.5" fill="none"/><circle cx="40" cy="6" r="2.5" fill="#b48a78"/></svg>
+    <div class="place-block">
+        <div class="place-title">Место проведения</div>
+        <div class="place-name">ул. Фрунзе 160</div>
+        <div class="place-restaurant">РЕСТОРАН «ЫРЫСКЫ»</div>
+        <a class="restaurant-link" href="https://go.2gis.com/GFTCL" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            Открыть на карте
+        </a>
+    </div>
+    <div class="divider"></div>
+    <div class="countdown-block">
+        <div class="countdown-title">До свадьбы осталось:</div>
+        <div class="countdown" id="countdown"></div>
+    </div>
+    <div class="footer">
+        <div class="footer-text">
+            <p>С любовью, <br>
+            <span class="footer-name">Адилет и Сезим</span></p>
+            <div class="footer-image-polaroid">
+                <img src="{% static 'img1.jpg' %}" alt="image" class="footer-image">
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // === Календарь ===
+    function renderCalendar(year, month, day) {
+        const calendarDiv = document.getElementById('calendar');
+        const date = new Date(year, month, 1);
+        let html = '<table class="calendar-table">';
+        html += '<tr><th>ПН</th><th>ВТ</th><th>СР</th><th>ЧТ</th><th>ПТ</th><th>СБ</th><th>ВС</th></tr><tr>';
+        let firstDay = (date.getDay() + 6) % 7; // Пн=0, Вс=6
+        for (let i = 0; i < firstDay; i++) html += '<td></td>';
+        while (date.getMonth() === month) {
+            let cls = '';
+            if (date.getDate() === day) cls = 'selected';
+            html += `<td class="${cls}">${date.getDate()}</td>`;
+            if ((date.getDay() + 6) % 7 === 6) html += '</tr><tr>';
+            date.setDate(date.getDate() + 1);
+        }
+        html += '</tr></table>';
+        calendarDiv.innerHTML = html;
+    }
+    renderCalendar(2025, 7, 2); // Август (месяцы с 0)
+
+    // === Обратный отсчёт ===
+    const weddingDate = new Date('2025-08-02T18:00:00');
+    function updateCountdown() {
+        const now = new Date();
+        const diff = weddingDate - now;
+        if (diff <= 0) {
+            document.getElementById('countdown').innerHTML = '<span>Свадьба уже началась!</span>';
+            return;
+        }
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        document.getElementById('countdown').innerHTML = `
+            <span><span class="count">${days}</span><span class="label">дней</span></span>
+            <span><span class="count">${hours}</span><span class="label">часов</span></span>
+            <span><span class="count">${minutes}</span><span class="label">минут</span></span>
+            <span><span class="count">${seconds}</span><span class="label">секунд</span></span>
+        `;
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+</script>
+</body>
+</html>     
