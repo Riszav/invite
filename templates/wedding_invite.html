@@ -7,8 +7,87 @@
     <title>Приглашение на свадьбу</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">    
     <link rel="stylesheet" href="{% static 'style.css' %}">
+    <style>
+        /* Существующие стили ... */
+        
+        .audio-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(180,138,120,0.2);
+            z-index: 1000;
+            transition: transform 0.3s, background-color 0.3s;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(180,138,120,0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(180,138,120,0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(180,138,120,0);
+            }
+        }
+        .audio-tooltip {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #b48a78;
+            box-shadow: 0 2px 10px rgba(180,138,120,0.1);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 1000;
+        }
+        .audio-tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .audio-control:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 1);
+            animation: none;
+        }
+        .audio-control.playing {
+            animation: none;
+        }
+        .audio-control svg {
+            width: 28px;
+            height: 28px;
+            fill: #b48a78;
+            transition: fill 0.3s;
+        }
+        .audio-control:hover svg {
+            fill: #a06c5a;
+        }
+    </style>
 </head>
 <body>
+    <audio id="bgMusic" loop>
+        <source src="{% static 'idea_10.mp3' %}" type="audio/mpeg">
+    </audio>
+    <div class="audio-tooltip" id="audioTooltip">Нажмите, чтобы включить музыку</div>
+    <div class="audio-control" onclick="toggleMusic()" id="audioControl">
+        <svg viewBox="0 0 24 24" id="audioIcon">
+            <path d="M8 5v14l11-7z"/> <!-- Play icon -->
+        </svg>
+    </div>
 <svg class="bg-watercolor" width="100vw" height="100vh" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg">
     <ellipse cx="300" cy="200" rx="220" ry="120" fill="#fffbe6" fill-opacity="0.5"/>
     <ellipse cx="1200" cy="700" rx="180" ry="90" fill="#e6cfa7" fill-opacity="0.18"/>
@@ -124,6 +203,50 @@
     }
     setInterval(updateCountdown, 1000);
     updateCountdown();
+
+    // === Музыкальный плеер ===
+    const audio = document.getElementById('bgMusic');
+    const audioControl = document.getElementById('audioControl');
+    const audioIcon = document.getElementById('audioIcon');
+    const audioTooltip = document.getElementById('audioTooltip');
+    let isPlaying = false;
+
+    function toggleMusic() {
+        if (isPlaying) {
+            audio.pause();
+            audioIcon.innerHTML = '<path d="M8 5v14l11-7z"/>'; // Play icon
+            audioControl.classList.remove('playing');
+        } else {
+            audio.play();
+            audioIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; // Pause icon
+            audioControl.classList.add('playing');
+        }
+        isPlaying = !isPlaying;
+    }
+
+    // Показываем подсказку на 3 секунды
+    setTimeout(() => {
+        audioTooltip.classList.add('show');
+        setTimeout(() => {
+            audioTooltip.classList.remove('show');
+        }, 3000);
+    }, 1000);
+
+    // Предзагрузка аудио
+    audio.load();
+
+    // Обновляем иконку при изменении состояния аудио
+    audio.addEventListener('play', () => {
+        audioIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; // Pause icon
+        audioControl.classList.add('playing');
+        isPlaying = true;
+    });
+
+    audio.addEventListener('pause', () => {
+        audioIcon.innerHTML = '<path d="M8 5v14l11-7z"/>'; // Play icon
+        audioControl.classList.remove('playing');
+        isPlaying = false;
+    });
 </script>
 </body>
 </html>     
